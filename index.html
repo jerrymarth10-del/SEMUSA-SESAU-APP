@@ -67,7 +67,7 @@ section{padding:70px 0}.section-head{max-width:850px;margin:0 auto 28px;text-ali
 .pix-copy-icon{position:absolute;right:8px;top:50%;transform:translateY(-50%);width:40px;height:40px;border-radius:10px;border:1px solid #cddde7;background:rgba(255,255,255,.94);display:grid;place-items:center;cursor:pointer;font-size:18px;box-shadow:0 6px 16px rgba(16,42,67,.08)}
 .pix-copy-icon:hover{background:#f2f8fb}
 .pix-copy-icon.copied{background:#eaf8f1;border-color:#b9dfcd;color:#13744f}
-.copy{width:100%;margin-top:9px;padding:12px;border-radius:12px;border:1px solid #cddde7;background:#fff;color:#17415b;font-weight:900;cursor:pointer}.pix-help{color:var(--muted);font-size:.8rem;line-height:1.5}.access{width:100%;background:linear-gradient(180deg,#2fb976,#198557);color:#fff;margin-top:10px}
+.copy{width:100%;margin-top:11px;padding:15px;border-radius:13px;border:0;background:linear-gradient(180deg,#25D366,#159447);color:#fff;font-weight:1000;cursor:pointer;box-shadow:0 14px 30px rgba(37,211,102,.20);font-size:.95rem}.pix-help{color:var(--muted);font-size:.8rem;line-height:1.5}.access{width:100%;background:linear-gradient(180deg,#2fb976,#198557);color:#fff;margin-top:10px}
 .faq{display:grid;gap:13px;max-width:900px;margin:auto}.faq .card{padding:20px}.faq h3{font-size:1rem}
 footer{text-align:center;padding:40px 0 90px;color:#6b7f90;border-top:1px solid #dfe9ef}
 .float{position:fixed;right:16px;bottom:16px;z-index:20;background:linear-gradient(180deg,#1383aa,#0d6283);color:#fff;box-shadow:0 16px 36px rgba(17,107,143,.25);padding:15px 19px;border-radius:17px;font-weight:900}
@@ -261,7 +261,7 @@ footer{text-align:center;padding:40px 0 90px;color:#6b7f90;border-top:1px solid 
             <button class="pix-copy-icon" id="copyPixIcon" type="button" aria-label="Copiar código Pix" title="Copiar código Pix">⧉</button>
           </div>
         </label>
-        <button class="copy" id="copyPix" type="button">COPIAR CÓDIGO PIX</button>
+        <button class="copy" id="copyPix" type="button">📋 COPIAR CÓDIGO PIX</button>
         <p class="pix-help">Depois do pagamento, a confirmação acontece automaticamente. Mantenha esta página aberta por alguns instantes.</p>
         <button class="btn access" id="accessPlatform" type="button" hidden>ACESSAR MEU PREPARATÓRIO</button>
       </div>
@@ -364,13 +364,13 @@ async function copyPixCode(){
     pixCode.select();
     document.execCommand('copy');
   }
-  copyPix.textContent='PIX COPIADO ✓';
+  copyPix.textContent='✓ PIX COPIADO';
   if(copyPixIcon){
     copyPixIcon.textContent='✓';
     copyPixIcon.classList.add('copied');
   }
   setTimeout(()=>{
-    copyPix.textContent='COPIAR CÓDIGO PIX';
+    copyPix.textContent='📋 COPIAR CÓDIGO PIX';
     if(copyPixIcon){
       copyPixIcon.textContent='⧉';
       copyPixIcon.classList.remove('copied');
