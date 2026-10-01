@@ -84,6 +84,16 @@ footer{text-align:center;padding:40px 0 90px;color:#6b7f90;border-top:1px solid 
 .proof-note{max-width:780px;margin:0 auto 22px;text-align:center;color:var(--muted);line-height:1.65}
 @media(max-width:930px){.hero-video{width:100%;height:auto;max-height:none}.hero-conversion{padding:10px}.proof-note{text-align:left}}
 
+
+.hero-video-wrap{position:relative;display:inline-block;max-width:100%}
+.semusa-poster-brand{position:absolute;top:7%;left:50%;transform:translateX(-50%);z-index:3;display:flex;align-items:center;gap:10px;padding:10px 18px;border-radius:16px;background:rgba(255,255,255,.96);border:1px solid rgba(17,107,143,.18);box-shadow:0 8px 26px rgba(16,42,67,.18);color:#0b3154;pointer-events:none;transition:opacity .18s ease,visibility .18s ease}
+.semusa-poster-icon{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:linear-gradient(135deg,#116b8f,#0e8a7a);color:#fff;font-size:20px;font-weight:900}
+.semusa-poster-brand span:last-child{display:grid;line-height:1}
+.semusa-poster-brand strong{font-size:clamp(1.15rem,2.5vw,1.75rem);letter-spacing:.4px}
+.semusa-poster-brand small{font-size:.62rem;letter-spacing:1.4px;color:#477084;margin-top:5px;font-weight:900}
+.hero-video-shell.is-playing .semusa-poster-brand{opacity:0;visibility:hidden}
+@media(max-width:600px){.semusa-poster-brand{top:6%;padding:8px 12px;gap:8px}.semusa-poster-icon{width:29px;height:29px;font-size:17px}}
+
 </style>
 </head>
 <body>
@@ -107,6 +117,21 @@ footer{text-align:center;padding:40px 0 90px;color:#6b7f90;border-top:1px solid 
       <a class="btn btn-secondary" href="#material">VER TUDO QUE ESTÁ INCLUSO</a>
     </div>
     <div class="micro">Pagamento único via Pix • R$ 129,90 • escolha sua área antes do pagamento</div>
+    <div class="hero-conversion">
+      <div class="hero-video-shell" id="semusaVideoShell">
+        <div class="hero-video-label">▶ VEJA A PLATAFORMA POR DENTRO</div>
+        <div class="hero-video-wrap">
+          <video class="hero-video" id="semusaVideo" controls playsinline preload="metadata" poster="https://raw.githubusercontent.com/jerrymarth10-del/apostilas-jiparana/main/assets/hero.jpg" aria-label="Vídeo de apresentação da plataforma JR Aprova para o preparatório SEMUSA Porto Velho">
+            <source src="https://rgglopnpjfryxdbfspbt.supabase.co/storage/v1/object/public/jr-media/landing/sesau-video-conversao.mp4" type="video/mp4">
+          </video>
+          <div class="semusa-poster-brand" aria-hidden="true">
+            <span class="semusa-poster-icon">✚</span>
+            <span><strong>SEMUSA</strong><small>PORTO VELHO</small></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
 </div>
 
   <aside class="hero-card">
@@ -388,6 +413,16 @@ if(proofTrack){
     proofIndex=best;
   },{passive:true});
   startProofAuto();
+}
+
+
+const semusaVideo=document.getElementById('semusaVideo');
+const semusaVideoShell=document.getElementById('semusaVideoShell');
+if(semusaVideo&&semusaVideoShell){
+  const syncPosterBrand=()=>semusaVideoShell.classList.toggle('is-playing',!semusaVideo.paused&&!semusaVideo.ended);
+  semusaVideo.addEventListener('play',syncPosterBrand);
+  semusaVideo.addEventListener('pause',syncPosterBrand);
+  semusaVideo.addEventListener('ended',syncPosterBrand);
 }
 
 </script>
