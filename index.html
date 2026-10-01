@@ -107,16 +107,7 @@ footer{text-align:center;padding:40px 0 90px;color:#6b7f90;border-top:1px solid 
       <a class="btn btn-secondary" href="#material">VER TUDO QUE ESTÁ INCLUSO</a>
     </div>
     <div class="micro">Pagamento único via Pix • R$ 129,90 • escolha sua área antes do pagamento</div>
-  <div class="hero-conversion">
-    <div class="hero-video-shell">
-      <div class="hero-video-label">▶ VEJA A PLATAFORMA POR DENTRO</div>
-      <video class="hero-video" controls playsinline preload="metadata" poster="https://raw.githubusercontent.com/jerrymarth10-del/apostilas-jiparana/main/assets/hero.jpg" aria-label="Vídeo de apresentação da plataforma JR Aprova para o preparatório SEMUSA Porto Velho">
-        <source src="https://rgglopnpjfryxdbfspbt.supabase.co/storage/v1/object/public/jr-media/landing/sesau-video-conversao.mp4" type="video/mp4">
-      </video>
-    </div>
-  </div>
-
-  </div>
+</div>
 
   <aside class="hero-card">
     <div class="edital-head"><strong>Concurso SEMUSA Porto Velho</strong><span class="live">EDITAL PUBLICADO</span></div>
@@ -173,13 +164,12 @@ footer{text-align:center;padding:40px 0 90px;color:#6b7f90;border-top:1px solid 
     <p>Experiências reais de alunos da JR Aprova em outros concursos da área pública e da saúde.</p>
   </div>
   <p class="proof-note">Os depoimentos abaixo mostram experiências individuais de alunos. Aprovação e classificação dependem do estudo, desempenho e regras de cada concurso.</p>
-  <div class="proof-track" aria-label="Carrossel de depoimentos de alunos">
+  <div class="proof-track" id="proofTrack" aria-label="Carrossel de depoimentos de alunos">
     <div class="proof-card"><img loading="lazy" src="https://raw.githubusercontent.com/jerrymarth10-del/apostilas-jiparana/main/assets/depoimento_aprovada_saude.jpg" alt="Feedback de aluna aprovada em concurso de agente de saúde"></div>
     <div class="proof-card"><img loading="lazy" src="https://raw.githubusercontent.com/jerrymarth10-del/apostilas-jiparana/main/assets/depoimento_tres_cargos.jpg" alt="Feedback de aluna aprovada em três cargos"></div>
     <div class="proof-card"><img loading="lazy" src="https://raw.githubusercontent.com/jerrymarth10-del/apostilas-jiparana/main/assets/depoimento_real_1.jpg" alt="Feedback de aluno JR Aprova"></div>
     <div class="proof-card"><img loading="lazy" src="https://raw.githubusercontent.com/jerrymarth10-del/apostilas-jiparana/main/assets/depoimento_real_2.jpg" alt="Feedback de aluno JR Aprova"></div>
-    <div class="proof-card"><img loading="lazy" src="https://raw.githubusercontent.com/jerrymarth10-del/apostilas-jiparana/main/assets/depoimento_real_3.jpg" alt="Feedback de aluno JR Aprova"></div>
-  </div>
+</div>
 </div>
 </section>
 
@@ -365,6 +355,41 @@ form.addEventListener('submit',async e=>{
     submit.disabled=false;submit.textContent='GERAR PIX E GARANTIR ACESSO';
   }
 });
+
+const proofTrack=document.getElementById('proofTrack');
+if(proofTrack){
+  const proofCards=Array.from(proofTrack.querySelectorAll('.proof-card'));
+  let proofIndex=0;
+  let proofPaused=false;
+  let proofTimer=null;
+  function goProof(index){
+    if(!proofCards.length)return;
+    proofIndex=(index+proofCards.length)%proofCards.length;
+    const card=proofCards[proofIndex];
+    proofTrack.scrollTo({left:card.offsetLeft-proofTrack.offsetLeft,behavior:'smooth'});
+  }
+  function startProofAuto(){
+    if(proofTimer)clearInterval(proofTimer);
+    if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+    proofTimer=setInterval(()=>{if(!proofPaused&&proofCards.length>1)goProof(proofIndex+1)},3800);
+  }
+  proofTrack.addEventListener('mouseenter',()=>proofPaused=true);
+  proofTrack.addEventListener('mouseleave',()=>proofPaused=false);
+  proofTrack.addEventListener('touchstart',()=>proofPaused=true,{passive:true});
+  proofTrack.addEventListener('touchend',()=>setTimeout(()=>proofPaused=false,1200),{passive:true});
+  proofTrack.addEventListener('scroll',()=>{
+    const center=proofTrack.scrollLeft+proofTrack.clientWidth/2;
+    let best=0,bestDist=Infinity;
+    proofCards.forEach((card,i)=>{
+      const cardCenter=card.offsetLeft+card.clientWidth/2;
+      const dist=Math.abs(center-cardCenter);
+      if(dist<bestDist){bestDist=dist;best=i}
+    });
+    proofIndex=best;
+  },{passive:true});
+  startProofAuto();
+}
+
 </script>
 <a class="whatsapp-support" href="https://wa.me/5569993539150?text=Ol%C3%A1%2C%20tenho%20uma%20d%C3%BAvida%20sobre%20o%20preparat%C3%B3rio%20SEMUSA%20Porto%20Velho." target="_blank" rel="noopener noreferrer" aria-label="Suporte SEMUSA no WhatsApp"><span>💬</span><span>Suporte SEMUSA<small>WhatsApp</small></span></a>
 </body>
