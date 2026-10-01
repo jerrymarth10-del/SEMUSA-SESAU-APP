@@ -367,7 +367,7 @@ form.addEventListener('submit',async e=>{
   try{
     const r=await fetch('/api/checkout',{method:'POST',headers:{'Content-Type':'application/json'},cache:'no-store',body:JSON.stringify(payload)});
     const d=await r.json().catch(()=>({}));
-    if(!r.ok)throw new Error(d.error||'Não foi possível gerar o Pix.');
+    if(!r.ok){const msg=typeof d.error==='string'?d.error:'Não foi possível gerar o Pix agora. Tente novamente.';throw new Error(msg);}
     checkoutToken=d.checkoutToken||'';
     if(!checkoutToken)throw new Error('Checkout não retornou a confirmação necessária.');
     lockArea(d.areaName||area);
