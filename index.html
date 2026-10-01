@@ -58,7 +58,7 @@ section{padding:70px 0}.section-head{max-width:850px;margin:0 auto 28px;text-ali
 .areas{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.area{position:relative;cursor:pointer}.area input{position:absolute;opacity:0;pointer-events:none}.area span{display:flex;min-height:47px;align-items:center;padding:10px 12px;border:1px solid #d6e3eb;border-radius:13px;background:#fff;color:#21435b;font-size:.79rem;font-weight:800;transition:.18s}.area input:checked+span{border-color:var(--teal);background:#e9f8f4;color:#075f55;box-shadow:0 0 0 3px rgba(14,138,122,.10)}
 .formgrid{display:grid;grid-template-columns:1fr 1fr;gap:11px}.formgrid label:first-child{grid-column:1/-1}.formgrid label{display:grid;gap:6px;color:#27485f;font-size:.82rem;font-weight:800}.formgrid input{width:100%;border:1px solid #cddde7;background:#fff;color:var(--ink);border-radius:13px;padding:13px 14px;outline:none}.formgrid input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(17,107,143,.12)}
 .consent{display:flex;gap:9px;align-items:flex-start;margin:14px 0;color:var(--muted);font-size:.8rem;line-height:1.5}.consent input{margin-top:3px;accent-color:var(--teal)}.submit{width:100%}
-.error{margin-top:11px;padding:11px;border-radius:12px;background:#fff0f1;border:1px solid #f0c5c9;color:#8f2730;font-size:.86rem;font-weight:700}
+.error{margin-top:11px;padding:11px;border-radius:12px;background:#fff0f1;border:1px solid #f0c5c9;color:#8f2730;font-size:.86rem;font-weight:700}.recover-toggle{width:100%;margin-top:11px;padding:12px;border-radius:12px;border:1px solid #cddde7;background:#fff;color:#17415b;font-weight:900;cursor:pointer}.recover-box{margin-top:12px;padding:14px;border-radius:14px;border:1px solid #d7e4eb;background:#f7fbfd}.recover-box label{display:grid;gap:6px;margin-top:9px;color:#27485f;font-size:.8rem;font-weight:800}.recover-box input{width:100%;border:1px solid #cddde7;background:#fff;color:var(--ink);border-radius:12px;padding:12px 13px;outline:none}.recover-submit{width:100%;margin-top:11px;padding:13px;border:0;border-radius:12px;background:linear-gradient(180deg,#1383aa,#0d6283);color:#fff;font-weight:900;cursor:pointer}.recover-note{margin:0;color:var(--muted);font-size:.76rem;line-height:1.45}
 .pix{text-align:center}.pix-status{display:inline-flex;align-items:center;gap:8px;padding:9px 12px;border-radius:999px;background:#fff8df;border:1px solid #ecd98e;color:#705c08;font-size:.85rem;font-weight:900;margin-bottom:13px}.dot{width:9px;height:9px;border-radius:50%;background:#e0b900;animation:pulse 1.4s infinite}.pix.approved .dot{background:#24a867}@keyframes pulse{50%{transform:scale(1.35)}}
 #pixQr{width:225px;height:225px;object-fit:contain;background:#fff;padding:8px;border-radius:16px;margin:0 auto 13px;border:1px solid var(--line)}
 .pix label{display:grid;gap:6px;text-align:left;color:#27485f;font-size:.82rem;font-weight:800}
@@ -251,6 +251,14 @@ footer{text-align:center;padding:40px 0 90px;color:#6b7f90;border-top:1px solid 
         <button class="btn btn-primary submit" id="checkoutSubmit" type="submit">GERAR PIX E GARANTIR ACESSO</button>
         <div class="error" id="checkoutError" role="alert" hidden></div>
       </form>
+      <button class="recover-toggle" id="recoverToggle" type="button">JÁ PAGUEI / RECUPERAR ACESSO</button>
+      <div class="recover-box" id="recoverBox" hidden>
+        <p class="recover-note">Use o mesmo e-mail da compra e o identificador numérico que aparece no comprovante Pix (ex.: mpqrinter123456 → informe 123456).</p>
+        <label>E-mail da compra<input id="recoverEmail" type="email" autocomplete="email" inputmode="email" placeholder="voce@email.com"></label>
+        <label>Identificador do pagamento<input id="recoverPaymentId" inputmode="numeric" autocomplete="off" placeholder="Somente números"></label>
+        <button class="recover-submit" id="recoverSubmit" type="button">LIBERAR MEU ACESSO</button>
+        <div class="error" id="recoverError" role="alert" hidden></div>
+      </div>
 
       <div class="pix" id="pixBox" hidden>
         <div class="pix-status" id="pixStatus"><span class="dot"></span>Aguardando pagamento...</div>
@@ -299,6 +307,13 @@ const copyPixIcon=document.getElementById('copyPixIcon');
 const access=document.getElementById('accessPlatform');
 const areaPicker=document.getElementById('areaPicker');
 const areaInputs=Array.from(document.querySelectorAll('input[name="area"]'));
+const recoverToggle=document.getElementById('recoverToggle');
+const recoverBox=document.getElementById('recoverBox');
+const recoverEmail=document.getElementById('recoverEmail');
+const recoverPaymentId=document.getElementById('recoverPaymentId');
+const recoverSubmit=document.getElementById('recoverSubmit');
+const recoverError=document.getElementById('recoverError');
+const JR_PENDING_KEY='jr_semusa_pending_checkout_v1';
 
 function uuid(){
   if(window.crypto&&crypto.randomUUID)return crypto.randomUUID();
@@ -350,6 +365,7 @@ async function checkPayment(){
       pixBox.classList.add('approved');
       pixStatus.innerHTML='<span class="dot"></span>Pagamento aprovado! Liberando seu acesso...';
       access.hidden=false;
+      try{localStorage.removeItem(JR_PENDING_KEY)}catch{}
       setTimeout(openPlatform,1200);
     }
   }catch{}
@@ -401,6 +417,14 @@ form.addEventListener('submit',async e=>{
     if(!r.ok){const msg=typeof d.error==='string'?d.error:'Não foi possível gerar o Pix agora. Tente novamente.';throw new Error(msg);}
     checkoutToken=d.checkoutToken||'';
     if(!checkoutToken)throw new Error('Checkout não retornou a confirmação necessária.');
+    try{localStorage.setItem(JR_PENDING_KEY,JSON.stringify({
+      checkoutToken,
+      qrCode:d.qrCode||'',
+      qrCodeBase64:d.qrCodeBase64||'',
+      area,
+      areaName:d.areaName||area,
+      createdAt:Date.now()
+    }))}catch{}
     lockArea(d.areaName||area);
     cpf.value='';form.hidden=true;pixBox.hidden=false;pixCode.value=d.qrCode||'';
     if(d.qrCodeBase64){pixQr.src='data:image/png;base64,'+d.qrCodeBase64;pixQr.hidden=false}
@@ -411,6 +435,54 @@ form.addEventListener('submit',async e=>{
     submit.disabled=false;submit.textContent='GERAR PIX E GARANTIR ACESSO';
   }
 });
+
+
+if(recoverToggle)recoverToggle.addEventListener('click',()=>{
+  recoverBox.hidden=!recoverBox.hidden;
+  if(!recoverBox.hidden&&recoverEmail)recoverEmail.focus();
+});
+if(recoverSubmit)recoverSubmit.addEventListener('click',async()=>{
+  if(recoverError)recoverError.hidden=true;
+  const email=String(recoverEmail?.value||'').trim();
+  const paymentId=String(recoverPaymentId?.value||'').trim();
+  if(!email||!paymentId){
+    if(recoverError){recoverError.textContent='Informe o e-mail da compra e o identificador do pagamento.';recoverError.hidden=false}
+    return;
+  }
+  recoverSubmit.disabled=true;recoverSubmit.textContent='CONFIRMANDO PAGAMENTO...';
+  try{
+    const r=await fetch('/api/payment-status',{method:'POST',headers:{'Content-Type':'application/json'},cache:'no-store',body:JSON.stringify({recover:true,email,paymentId})});
+    const d=await r.json().catch(()=>({}));
+    if(!r.ok)throw new Error(d.error||'Não foi possível recuperar o acesso.');
+    if(!d.approved)throw new Error('O pagamento ainda não aparece como aprovado.');
+    accessToken=d.accessToken||'';platformUrl=d.platformUrl||'';
+    if(!accessToken||!platformUrl)throw new Error('A liberação não foi retornada.');
+    recoverSubmit.textContent='PAGAMENTO APROVADO ✓';
+    setTimeout(openPlatform,500);
+  }catch(e){
+    if(recoverError){recoverError.textContent=e?.message||'Não foi possível recuperar o acesso.';recoverError.hidden=false}
+    recoverSubmit.disabled=false;recoverSubmit.textContent='LIBERAR MEU ACESSO';
+  }
+});
+
+function resumePendingCheckout(){
+  try{
+    const saved=JSON.parse(localStorage.getItem(JR_PENDING_KEY)||'null');
+    if(!saved?.checkoutToken)return;
+    if(!saved.createdAt||Date.now()-Number(saved.createdAt)>26*60*60*1000){localStorage.removeItem(JR_PENDING_KEY);return}
+    checkoutToken=String(saved.checkoutToken);
+    form.hidden=true;pixBox.hidden=false;
+    pixCode.value=String(saved.qrCode||'');
+    if(saved.qrCodeBase64){pixQr.src='data:image/png;base64,'+saved.qrCodeBase64;pixQr.hidden=false}
+    lockArea(saved.areaName||saved.area||'selecionada');
+    if(!timer)timer=setInterval(checkPayment,3000);
+    checkPayment();
+  }catch{}
+}
+resumePendingCheckout();
+window.addEventListener('focus',checkPayment);
+window.addEventListener('pageshow',checkPayment);
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')checkPayment()});
 
 const proofTrack=document.getElementById('proofTrack');
 if(proofTrack){
