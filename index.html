@@ -249,6 +249,8 @@ footer{text-align:center;padding:40px 0 90px;color:#6b7f90;border-top:1px solid 
         </div>
         <label class="consent"><input id="checkoutConsent" type="checkbox" required><span>Confirmo meus dados, a área escolhida e quero continuar com o pagamento de R$ 129,90.</span></label>
         <button class="btn btn-primary submit" id="checkoutSubmit" type="submit">GERAR PIX E GARANTIR ACESSO</button>
+        <button class="btn btn-primary submit" id="cardCheckoutButton" type="button" style="width:100%;margin-top:10px;background:linear-gradient(180deg,#1769aa,#0d4f86);color:#fff;border:0;cursor:pointer">PAGAR COM CARTÃO • ATÉ 12X</button>
+        <p id="cardCheckoutNote" style="margin:9px 0 0;text-align:center;font-size:.76rem;line-height:1.45;opacity:.78">Parcelas e eventuais juros são mostrados pelo Mercado Pago antes da confirmação.</p>
         <div class="error" id="checkoutError" role="alert" hidden></div>
       </form>
       <button class="recover-toggle" id="recoverToggle" type="button">JÁ PAGUEI / RECUPERAR ACESSO</button>
@@ -533,6 +535,6 @@ if(semusaVideo&&semusaVideoShell){
 
 </script>
 <a class="whatsapp-support" href="https://wa.me/5569993539150?text=Ol%C3%A1%2C%20tenho%20uma%20d%C3%BAvida%20sobre%20o%20preparat%C3%B3rio%20SEMUSA%20Porto%20Velho." target="_blank" rel="noopener noreferrer" aria-label="Suporte SEMUSA no WhatsApp"><span>💬</span><span>Precisa de ajuda?<small>Falar no WhatsApp</small></span></a>
-\n<script src="/card-payment.js" defer></script>
+\n<script src="/card-payment.js?v=20261001-2" defer></script>
 </body>
 </html>
