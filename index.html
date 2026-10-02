@@ -100,6 +100,19 @@ footer{text-align:center;padding:40px 0 90px;color:#6b7f90;border-top:1px solid 
 .hero-video-shell.is-playing .semusa-poster-brand{opacity:0;visibility:hidden}
 @media(max-width:600px){.semusa-poster-brand{top:6%;padding:8px 12px;gap:8px}.semusa-poster-icon{width:29px;height:29px;font-size:17px}}
 
+
+/* Conversão: demonstração principal + depoimento em vídeo */
+.hero-video-subtitle{margin:0;text-align:center;max-width:620px;line-height:1.55;font-size:.94rem;color:#526b7d}
+.hero-video-wrap{position:relative;display:grid;place-items:center;width:100%}
+.main-video-sound{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);z-index:5;border:1px solid rgba(16,42,67,.16);background:rgba(255,255,255,.94);color:#123b55;padding:10px 14px;border-radius:999px;font-weight:900;cursor:pointer;box-shadow:0 10px 28px rgba(0,0,0,.18);backdrop-filter:blur(8px)}
+.main-video-sound:hover{transform:translateX(-50%) translateY(-1px)}
+.featured-video-proof{display:grid;grid-template-columns:minmax(0,.85fr) minmax(260px,1.15fr);gap:24px;align-items:center;margin:0 auto 26px;padding:22px;border-radius:26px;border:1px solid #d7e5ed;background:#fff;box-shadow:0 18px 50px rgba(16,42,67,.10)}
+.featured-video-copy .proof-badge{display:inline-flex;padding:7px 11px;border-radius:999px;font-size:.78rem;font-weight:900;letter-spacing:.2px;background:#edf8f5;border:1px solid #cfe8e1;color:#176b60}
+.featured-video-copy h3{margin:12px 0 9px;font-size:clamp(1.35rem,3vw,2rem);line-height:1.12}
+.featured-video-copy p{margin:0;line-height:1.65;color:#607286}
+.featured-testimonial-video{display:block;width:100%;max-height:560px;aspect-ratio:9/16;object-fit:contain;background:#000;border-radius:20px;box-shadow:0 18px 48px rgba(0,0,0,.28)}
+@media(max-width:760px){.featured-video-proof{grid-template-columns:1fr}.featured-video-copy{text-align:center}.main-video-sound{bottom:10px;font-size:.82rem}}
+
 </style>
 </head>
 <body>
@@ -126,14 +139,13 @@ footer{text-align:center;padding:40px 0 90px;color:#6b7f90;border-top:1px solid 
     <div class="hero-conversion">
       <div class="hero-video-shell" id="semusaVideoShell">
         <div class="hero-video-label">▶ VEJA A PLATAFORMA POR DENTRO</div>
+        <p class="hero-video-subtitle">Você consegue estudar pelo celular ou pelo computador. Veja como aulas, PDFs, questões, simulados e materiais específicos ficam organizados dentro da plataforma.</p>
         <div class="hero-video-wrap">
-          <video class="hero-video" id="semusaVideo" controls playsinline preload="metadata" poster="https://raw.githubusercontent.com/jerrymarth10-del/apostilas-jiparana/main/assets/hero.jpg" aria-label="Vídeo de apresentação da plataforma JR Aprova para o preparatório SEMUSA Porto Velho">
-            <source src="https://rgglopnpjfryxdbfspbt.supabase.co/storage/v1/object/public/jr-media/landing/sesau-video-conversao.mp4" type="video/mp4">
+          <video class="hero-video" id="mainPlatformVideo" controls autoplay muted playsinline preload="metadata" poster="https://raw.githubusercontent.com/jerrymarth10-del/apostilas-jiparana/main/assets/hero.jpg" aria-label="Demonstração da plataforma JR Aprova funcionando no celular e no computador">
+            <source src="https://rgglopnpjfryxdbfspbt.supabase.co/storage/v1/object/public/jr-media/landing/plataforma-jr-aprova-2026.mp4" type="video/mp4">
+            Seu navegador não conseguiu reproduzir o vídeo.
           </video>
-          <div class="semusa-poster-brand" aria-hidden="true">
-            <span class="semusa-poster-icon">✚</span>
-            <span><strong>SEMUSA</strong><small>PORTO VELHO</small></span>
-          </div>
+          <button class="main-video-sound" id="mainVideoSound" type="button" aria-pressed="false">🔊 Ativar som</button>
         </div>
       </div>
     </div>
@@ -195,6 +207,17 @@ footer{text-align:center;padding:40px 0 90px;color:#6b7f90;border-top:1px solid 
     <p>Experiências reais de alunos da JR Aprova em outros concursos da área pública e da saúde.</p>
   </div>
   <p class="proof-note">Os depoimentos abaixo mostram experiências individuais de alunos. Aprovação e classificação dependem do estudo, desempenho e regras de cada concurso.</p>
+  <div class="featured-video-proof">
+    <div class="featured-video-copy">
+      <span class="proof-badge">DEPOIMENTO REAL</span>
+      <h3>Mais de 40 alunos aprovados em concurso anterior</h3>
+      <p>Veja o relato de uma das alunas que estudou com nosso material. Resultados anteriores não garantem aprovação, mas ajudam você a conhecer a experiência de quem já usou a plataforma.</p>
+    </div>
+    <video class="featured-testimonial-video" controls playsinline preload="metadata" poster="https://raw.githubusercontent.com/jerrymarth10-del/apostilas-jiparana/main/assets/depoimento_aprovada_saude.jpg" aria-label="Depoimento de aluna sobre a experiência com a JR Aprova">
+      <source src="https://rgglopnpjfryxdbfspbt.supabase.co/storage/v1/object/public/jr-media/landing/sesau-video-conversao.mp4" type="video/mp4">
+      Seu navegador não conseguiu reproduzir o depoimento.
+    </video>
+  </div>
   <div class="proof-track" id="proofTrack" aria-label="Carrossel de depoimentos de alunos">
     <div class="proof-card"><img loading="lazy" src="https://raw.githubusercontent.com/jerrymarth10-del/apostilas-jiparana/main/assets/depoimento_aprovada_saude.jpg" alt="Feedback de aluna aprovada em concurso de agente de saúde"></div>
     <div class="proof-card"><img loading="lazy" src="https://raw.githubusercontent.com/jerrymarth10-del/apostilas-jiparana/main/assets/depoimento_tres_cargos.jpg" alt="Feedback de aluna aprovada em três cargos"></div>
@@ -538,5 +561,51 @@ if(semusaVideo&&semusaVideoShell){
 </script>
 <a class="whatsapp-support" href="https://wa.me/5569993539150?text=Ol%C3%A1%2C%20tenho%20uma%20d%C3%BAvida%20sobre%20o%20preparat%C3%B3rio%20SEMUSA%20Porto%20Velho." target="_blank" rel="noopener noreferrer" aria-label="Suporte SEMUSA no WhatsApp"><span>💬</span><span>Precisa de ajuda?<small>Falar no WhatsApp</small></span></a>
 \n<script src="/card-payment.js?v=20261001-2" defer></script>
+
+<script>
+(() => {
+  const video = document.getElementById('mainPlatformVideo');
+  const soundButton = document.getElementById('mainVideoSound');
+  if (!video) return;
+
+  video.muted = true;
+  video.setAttribute('muted', '');
+
+  const playIfPossible = () => {
+    const promise = video.play();
+    if (promise && typeof promise.catch === 'function') promise.catch(() => {});
+  };
+
+  if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting && entry.intersectionRatio >= 0.45) {
+          playIfPossible();
+        } else if (!entry.isIntersecting || entry.intersectionRatio < 0.20) {
+          video.pause();
+        }
+      });
+    }, { threshold: [0, 0.20, 0.45, 0.75] });
+    observer.observe(video);
+  } else {
+    playIfPossible();
+  }
+
+  if (soundButton) {
+    const syncSoundLabel = () => {
+      soundButton.textContent = video.muted ? '🔊 Ativar som' : '🔇 Tirar som';
+      soundButton.setAttribute('aria-pressed', String(!video.muted));
+    };
+    syncSoundLabel();
+    soundButton.addEventListener('click', () => {
+      video.muted = !video.muted;
+      syncSoundLabel();
+      playIfPossible();
+    });
+    video.addEventListener('volumechange', syncSoundLabel);
+  }
+})();
+</script>
+
 </body>
 </html>
