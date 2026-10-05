@@ -340,6 +340,7 @@ footer{text-align:center;padding:40px 0 90px;color:#6b7f90;border-top:1px solid 
           <label class="area"><input type="radio" name="area" value="biomedicina"><span>Biomedicina</span></label>
           <label class="area"><input type="radio" name="area" value="psicologia"><span>Psicologia</span></label>
           <label class="area"><input type="radio" name="area" value="acsfiscal"><span>Agente de Saúde / Fiscal Sanitário</span></label>
+          <label class="area"><input type="radio" name="area" value="acsfiscal" data-variant="assistentesocial"><span>Assistente Social</span></label>
           <label class="area"><input type="radio" name="area" value="endemias"><span>Agente de Combate às Endemias</span></label>
           <label class="area"><input type="radio" name="area" value="administrativo"><span>Área Administrativa</span></label>
           <label class="area"><input type="radio" name="area" value="clinico"><span>Clínico Geral / Medicina</span></label>
@@ -516,6 +517,7 @@ form.addEventListener('submit',async e=>{
     email:document.getElementById('checkoutEmail').value,
     cpf:cpf.value,
     area,
+    variant:document.querySelector('input[name="area"]:checked')?.dataset.variant||'',
     checkoutKey,
     termsAccepted:true,
     termsVersion:'jr-digital-2026-10-01-v1'
