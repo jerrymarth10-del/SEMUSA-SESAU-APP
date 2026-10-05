@@ -390,6 +390,7 @@ footer{text-align:center;padding:40px 0 90px;color:#6b7f90;border-top:1px solid 
           </div>
         </label>
         <button class="copy" id="copyPix" type="button">📋 COPIAR CÓDIGO PIX</button>
+        <button class="recover-toggle" id="newCheckoutButton" type="button" style="margin-top:10px;border-color:#b8d9cf;color:#0b6f61;background:#f4fbf8">↻ ESCOLHER OUTRA ÁREA / GERAR NOVO PIX</button>
         <p class="pix-help">Depois do pagamento, a confirmação acontece automaticamente. Mantenha esta página aberta por alguns instantes.</p>
         <button class="btn access" id="accessPlatform" type="button" hidden>ACESSAR MEU PREPARATÓRIO</button>
       </div>
@@ -434,7 +435,9 @@ const recoverPaymentId=document.getElementById('recoverPaymentId');
 const recoverCpf=document.getElementById('recoverCpf');
 const recoverSubmit=document.getElementById('recoverSubmit');
 const recoverError=document.getElementById('recoverError');
+const newCheckoutButton=document.getElementById('newCheckoutButton');
 const JR_PENDING_KEY='jr_semusa_pending_checkout_v1';
+const JR_PENDING_MAX_AGE=30*60*1000;
 
 function uuid(){
   if(window.crypto&&crypto.randomUUID)return crypto.randomUUID();
@@ -490,8 +493,32 @@ const cpf=document.getElementById('checkoutCpf');cpf.addEventListener('input',()
 
 function lockArea(name){
   areaInputs.forEach(x=>x.disabled=true);
-  const legend=areaPicker.querySelector('legend');
+  areaPicker?.setAttribute('aria-disabled','true');
+  const legend=areaPicker?.querySelector('legend');
   if(legend)legend.textContent='Área vinculada ao Pix: '+String(name||'selecionada');
+}
+function unlockArea(){
+  areaInputs.forEach(x=>x.disabled=false);
+  areaPicker?.removeAttribute('aria-disabled');
+  const legend=areaPicker?.querySelector('legend');
+  if(legend)legend.textContent='1. Escolha a sua área de preparação';
+  renderAreaSelection();
+}
+function resetPendingCheckout(){
+  if(timer){clearInterval(timer);timer=null}
+  checkoutToken='';accessToken='';platformUrl='';redirecting=false;
+  try{localStorage.removeItem(JR_PENDING_KEY)}catch{}
+  pixBox.classList.remove('approved');
+  pixBox.hidden=true;
+  pixStatus.innerHTML='<span class="dot"></span>Aguardando pagamento...';
+  pixCode.value='';
+  pixQr.removeAttribute('src');pixQr.hidden=true;
+  access.hidden=true;
+  form.hidden=false;
+  submit.disabled=false;submit.textContent='GERAR PIX E GARANTIR ACESSO';
+  checkoutKey=uuid();
+  unlockArea();
+  areaPicker?.scrollIntoView({behavior:'smooth',block:'start'});
 }
 
 function openPlatform(){
@@ -624,7 +651,7 @@ function resumePendingCheckout(){
   try{
     const saved=JSON.parse(localStorage.getItem(JR_PENDING_KEY)||'null');
     if(!saved?.checkoutToken)return;
-    if(!saved.createdAt||Date.now()-Number(saved.createdAt)>26*60*60*1000){localStorage.removeItem(JR_PENDING_KEY);return}
+    if(!saved.createdAt||Date.now()-Number(saved.createdAt)>JR_PENDING_MAX_AGE){localStorage.removeItem(JR_PENDING_KEY);return}
     checkoutToken=String(saved.checkoutToken);
     form.hidden=true;pixBox.hidden=false;
     pixCode.value=String(saved.qrCode||'');
@@ -634,6 +661,7 @@ function resumePendingCheckout(){
     checkPayment();
   }catch{}
 }
+if(newCheckoutButton)newCheckoutButton.addEventListener('click',resetPendingCheckout);
 resumePendingCheckout();
 window.addEventListener('focus',checkPayment);
 window.addEventListener('pageshow',checkPayment);
