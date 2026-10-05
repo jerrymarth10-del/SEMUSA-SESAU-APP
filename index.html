@@ -445,11 +445,15 @@ let checkoutKey=uuid(),checkoutToken='',accessToken='',platformUrl='',timer=null
 
 areaInputs.forEach(input=>input.addEventListener('change',()=>{
   checkoutKey=uuid();
-  try{sessionStorage.setItem('jr_semusa_area',input.value)}catch{}
+  try{
+    sessionStorage.setItem('jr_semusa_area',input.value);
+    sessionStorage.setItem('jr_semusa_variant',input.dataset.variant||'');
+  }catch{}
 }));
 try{
   const saved=sessionStorage.getItem('jr_semusa_area')||'';
-  const input=areaInputs.find(x=>x.value===saved);
+  const savedVariant=sessionStorage.getItem('jr_semusa_variant')||'';
+  const input=areaInputs.find(x=>x.value===saved&&(x.dataset.variant||'')===savedVariant);
   if(input)input.checked=true;
 }catch{}
 
@@ -653,7 +657,7 @@ if(semusaVideo&&semusaVideoShell){
 }
 
 </script>
-\n<script src="/card-payment.js?v=20261001-2" defer></script>
+\n<script src="/card-payment.js?v=20261005-assistente-social" defer></script>
 
 <script>
 (() => {
