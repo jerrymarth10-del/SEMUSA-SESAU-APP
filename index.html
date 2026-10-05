@@ -138,12 +138,12 @@ footer{text-align:center;padding:40px 0 90px;color:#6b7f90;border-top:1px solid 
 </div></div>
 
 <header class="hero">
-<div class="container" id="jr-exam-switch-v1">
+<div class="container" id="jr-exam-switch-v1" data-current-exam="semusa">
   <div class="jr-exam-switch">
     <div class="jr-exam-switch-copy"><strong>Qual concurso você vai fazer?</strong><span>Escolha seu preparatório e estude na trilha certa para a sua prova.</span></div>
     <div class="jr-exam-switch-actions">
-      <a class="jr-exam-choice is-current" href="#comprar" aria-current="page"><b>SEMUSA</b><small>Você está aqui</small></a>
-      <a class="jr-exam-choice" href="https://apostilas-sesau.vercel.app/"><b>SESAU/RO</b><small>Ver preparatório</small></a>
+      <a class="jr-exam-choice" data-exam="sesau" href="https://apostilas-sesau.vercel.app/"><b>SESAU/RO</b><small>Ver preparatório</small></a>
+      <a class="jr-exam-choice is-current" data-exam="semusa" href="#comprar" aria-current="page"><b>SEMUSA</b><small>Você está aqui</small></a>
     </div>
   </div>
 </div>
@@ -633,6 +633,36 @@ if(semusaVideo&&semusaVideoShell){
     });
     video.addEventListener('volumechange', syncSoundLabel);
   }
+})();
+</script>
+
+
+<script id="jr-exam-switch-state">
+(function () {
+  const root = document.getElementById('jr-exam-switch-v1');
+  if (!root) return;
+  const choices = Array.from(root.querySelectorAll('[data-exam]'));
+  const current = root.dataset.currentExam;
+  function highlight(exam, opening) {
+    choices.forEach(function (choice) {
+      const active = choice.dataset.exam === exam;
+      choice.classList.toggle('is-current', active);
+      if (active) choice.setAttribute('aria-current', 'page');
+      else choice.removeAttribute('aria-current');
+      choice.querySelector('small').textContent = active
+        ? (opening ? 'Abrindo preparatório…' : 'Você está aqui')
+        : 'Ver preparatório';
+    });
+  }
+  choices.forEach(function (choice) {
+    choice.addEventListener('click', function (event) {
+      if (event.defaultPrevented || event.button !== 0 || event.metaKey ||
+          event.ctrlKey || event.shiftKey || event.altKey) return;
+      highlight(choice.dataset.exam, choice.dataset.exam !== current);
+    });
+  });
+  window.addEventListener('pageshow', function () { highlight(current, false); });
+  highlight(current, false);
 })();
 </script>
 
