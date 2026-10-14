@@ -256,6 +256,17 @@ body.jr-guided-checkout{padding-bottom:112px}.jr-guided-checkout .float,.jr-guid
 .jr-specific-checkout-summary strong{font-size:.95rem;line-height:1.35;display:block}
 .jr-specific-checkout-summary small{font-size:.77rem;color:#607286;line-height:1.45;display:block;margin-top:3px}
 @media(max-width:650px){.jr-specific-checkout-summary{gap:9px;padding:9px}.jr-specific-checkout-summary img{width:84px}}
+
+/* Rota de compra direcionada a um curso: sem seções de divulgação da SEMUSA. */
+body.jr-focused-course-checkout>.top,
+body.jr-focused-course-checkout>header.hero,
+body.jr-focused-course-checkout>section:not(#comprar){display:none!important}
+body.jr-focused-course-checkout #comprar{padding-top:25px}
+body.jr-focused-course-checkout #checkoutCard .jr-search-label{display:none!important}
+body.jr-focused-course-checkout #areaPicker .area{display:none!important}
+body.jr-focused-course-checkout #areaPicker .area.is-selected{display:block!important}
+body.jr-focused-course-checkout #checkoutCard .area-picker legend{font-size:1.1rem}
+@media(max-width:650px){body.jr-focused-course-checkout #comprar{padding-top:12px}}
 </style>
 </head>
 <body>
@@ -1112,6 +1123,7 @@ const badge=document.getElementById('jrOfferCourseBadge'),heading=document.getEl
 if(!badge||!heading||!description||!card)return;
 const original={badge:badge.textContent,heading:heading.textContent,description:description.textContent,title:document.title};
 const areaFromLink=new URLSearchParams(location.search).get('area');
+if(Object.prototype.hasOwnProperty.call(names,areaFromLink)){document.body.classList.add('jr-focused-course-checkout');}
 let banner=null;
 function paint(){
  const area=radios.find(x=>x.checked)?.value||'';
@@ -1132,6 +1144,10 @@ function init(){
  if(Object.prototype.hasOwnProperty.call(names,areaFromLink)&&document.getElementById('pixBox')?.hidden!==false){
    const match=radios.find(x=>x.value===areaFromLink);
    if(match&&!match.disabled){match.checked=true;match.dispatchEvent(new Event('change',{bubbles:true}));}
+ }
+ if(document.body.classList.contains('jr-focused-course-checkout')){
+   const legend=document.querySelector('#areaPicker legend');
+   if(legend)legend.textContent='Preparatório selecionado';
  }
  radios.forEach(x=>x.addEventListener('change',paint));
  paint();
