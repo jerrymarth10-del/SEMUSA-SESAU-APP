@@ -250,6 +250,13 @@ body.jr-guided-checkout{padding-bottom:112px}.jr-guided-checkout .float,.jr-guid
   .jr-guided-checkout #areaPicker .areas,.jr-guided-checkout #areaPicker .area-options{grid-template-columns:1fr;gap:7px}
 }
 </style>
+<style id="jr-specific-checkout-style">
+.jr-specific-checkout-summary{display:flex;align-items:center;gap:12px;margin:0 0 17px;padding:12px;background:#f0f8fb;border:1px solid #cbdfe9;border-radius:15px;text-align:left;color:#163c57}
+.jr-specific-checkout-summary img{width:102px;aspect-ratio:16/9;object-fit:contain;border-radius:9px}
+.jr-specific-checkout-summary strong{font-size:.95rem;line-height:1.35;display:block}
+.jr-specific-checkout-summary small{font-size:.77rem;color:#607286;line-height:1.45;display:block;margin-top:3px}
+@media(max-width:650px){.jr-specific-checkout-summary{gap:9px;padding:9px}.jr-specific-checkout-summary img{width:84px}}
+</style>
 </head>
 <body>
 <div class="top">EDITAL PUBLICADO • SEMUSA PORTO VELHO 2026 • BANCA IBGP</div>
@@ -429,9 +436,9 @@ body.jr-guided-checkout{padding-bottom:112px}.jr-guided-checkout .float,.jr-guid
 <section id="comprar">
 <div class="container">
   <div class="offer">
-    <div class="badge">Acesso digital ao preparatório SEMUSA</div>
-    <h2 style="font-size:clamp(2rem,4vw,3.2rem);margin:14px 0 8px">Comece sua preparação para a SEMUSA Porto Velho</h2>
-    <p style="color:var(--muted);line-height:1.7;max-width:710px;margin:0 auto 14px">Escolha sua área, pague via Pix ou cartão e tenha acesso ao ecossistema de estudos da JR Aprova.</p>
+    <div class="badge" id="jrOfferCourseBadge">Acesso digital ao preparatório SEMUSA</div>
+    <h2 id="jrOfferCourseHeading" style="font-size:clamp(2rem,4vw,3.2rem);margin:14px 0 8px">Comece sua preparação para a SEMUSA Porto Velho</h2>
+    <p id="jrOfferCourseHelp" style="color:var(--muted);line-height:1.7;max-width:710px;margin:0 auto 14px">Escolha sua área, pague via Pix ou cartão e tenha acesso ao ecossistema de estudos da JR Aprova.</p>
     <div class="price-label">PAGAMENTO ÚNICO</div>
     <div class="jr-offer-before">De <s>R$ 600,00</s><span>por apenas</span></div>
       <div class="price">R$ 129,90</div>
@@ -1006,7 +1013,7 @@ function install(){
  if(!card||!form||!picker||!pix)return;
  const radios=[...picker.querySelectorAll('input[name="area"]')],grid=form.querySelector('.formgrid,.checkout-grid'),consent=form.querySelector('.consent,.checkout-consent'),pixButton=document.getElementById('checkoutSubmit'),cardButton=document.getElementById('cardCheckoutButton'),note=document.getElementById('cardCheckoutNote');
  if(!grid||!consent||!pixButton||!cardButton)return;
- const exam=new URLSearchParams(location.search).get('area')==='penal'?'Polícia Penal — Rondônia':document.getElementById('jr-exam-switch-v1')?.dataset.currentExam==='semusa'?'SEMUSA Porto Velho':'SESAU/RO';
+ const examForArea=area=>area==='penal'?'Polícia Penal — Rondônia':area==='prf'?'PRF — Área Administrativa':'SEMUSA Porto Velho';
  let step=1,method='pix',wasPending=!pix.hidden;
  const el=(tag,cls,text)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(text)n.textContent=text;return n;};
  const track=el('ol','jr-progress');track.setAttribute('aria-label','Etapas da compra');
@@ -1014,7 +1021,7 @@ function install(){
  const head=card.querySelector('.checkout-head');if(head)head.hidden=true;const security=card.querySelector('.checkout-security');if(security)security.hidden=true;
  const panels=[picker];
  const summary=el('section','jr-flow-panel');summary.id='jrFlowSummary';summary.append(el('h3','','Seu preparatório'));
- const selected=el('div','jr-selected-course');selected.append(el('small','',exam));const selectedTitle=el('strong','','');selected.append(selectedTitle);const cover=document.querySelector('.jr-exam-choice.is-current .jr-exam-thumbnail');if(cover){const image=cover.cloneNode();image.className='jr-summary-cover';selected.prepend(image);}summary.append(selected);
+ const selected=el('div','jr-selected-course');selected.append(el('small','',examForArea('')));const selectedTitle=el('strong','','');selected.append(selectedTitle);const cover=document.querySelector('.jr-exam-choice.is-current .jr-exam-thumbnail');if(cover){const image=cover.cloneNode();image.className='jr-summary-cover';selected.prepend(image);}summary.append(selected);
  const details=el('details','jr-material-details');details.open=true;details.append(el('summary','','Ver materiais incluídos'));details.append(el('p','','Videoaulas, PDFs, mapas mentais, questões, simulados e provas anteriores, conforme os materiais disponíveis para o cargo escolhido.'));summary.append(details);
  const price=el('div','jr-order-total');price.append(el('span','','Pagamento único'),el('strong','','R$ 129,90'));summary.append(price,el('p','jr-flow-help','Acesso digital liberado após a confirmação do pagamento. Estude pelo celular ou computador.'));
  picker.after(summary);panels.push(summary);
@@ -1037,7 +1044,7 @@ function install(){
  function pending(){return !pix.hidden;}
  function busy(){return pixButton.disabled||cardButton.disabled;}
  function render(){
-  const active=selection(),isPending=pending();selectedTitle.textContent=active?.closest('label').textContent.trim()||'Escolha seu cargo';barCourse.textContent=active?`${exam} • ${selectedTitle.textContent}`:exam;
+  const active=selection(),isPending=pending(),area=active?.value||'';selectedTitle.textContent=active?.closest('label').textContent.trim()||'Escolha seu cargo';barCourse.textContent=area==='penal'||area==='prf'?examForArea(area):active?`SEMUSA Porto Velho • ${selectedTitle.textContent}`:'SEMUSA Porto Velho';selected.querySelector('small').textContent=examForArea(area);
   panels.forEach((panel,i)=>panel.hidden=isPending||i!==step-1);
   // Preserve the existing form's hidden state while a Pix is pending.
   navigation.hidden=isPending;back.hidden=step===1;next.hidden=step===4;
@@ -1091,6 +1098,45 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
   });
   document.querySelectorAll('input[name="area"]').forEach(function(input){input.addEventListener('change',sync);});
   sync();
+})();
+</script>
+<script id="jr-specific-checkout-identity-v1">
+(function(){
+'use strict';
+const names={
+ penal:{name:'Polícia Penal — Rondônia',badge:'PREPARATÓRIO POLÍCIA PENAL • RONDÔNIA',heading:'Comece sua preparação para a Polícia Penal de Rondônia',description:'Preparatório completo da Polícia Penal de Rondônia. Pagamento único de R$ 129,90 por Pix ou cartão, com acesso à área Polícia Penal após confirmação.'},
+ prf:{name:'PRF — Área Administrativa',badge:'PREPARATÓRIO PRF • ÁREA ADMINISTRATIVA',heading:'Comece sua preparação para a área administrativa da PRF',description:'Preparatório completo da área administrativa da PRF. Pagamento único de R$ 129,90 por Pix ou cartão, com acesso à área PRF Administrativa após confirmação.'}
+};
+const radios=Array.from(document.querySelectorAll('input[name="area"]'));
+const badge=document.getElementById('jrOfferCourseBadge'),heading=document.getElementById('jrOfferCourseHeading'),description=document.getElementById('jrOfferCourseHelp'),card=document.getElementById('checkoutCard');
+if(!badge||!heading||!description||!card)return;
+const original={badge:badge.textContent,heading:heading.textContent,description:description.textContent,title:document.title};
+const areaFromLink=new URLSearchParams(location.search).get('area');
+let banner=null;
+function paint(){
+ const area=radios.find(x=>x.checked)?.value||'';
+ const item=names[area]||null;
+ badge.textContent=item?.badge||original.badge;
+ heading.textContent=item?.heading||original.heading;
+ description.textContent=item?.description||original.description;
+ document.title=item?item.name+' | JR Aprova':original.title;
+ if(!item){if(banner)banner.hidden=true;return;}
+ if(!banner){banner=document.createElement('div');banner.className='jr-specific-checkout-summary';banner.setAttribute('role','status');card.prepend(banner);}
+ banner.hidden=false;banner.replaceChildren();
+ const cover=document.querySelector('[data-jr-pick-area="'+area+'"] img');
+ if(cover){const image=cover.cloneNode(false);image.alt='';image.removeAttribute('loading');banner.append(image);}
+ const text=document.createElement('div'),strong=document.createElement('strong'),small=document.createElement('small');
+ strong.textContent=item.name;small.textContent='Preparatório individual • R$ 129,90 • Pix ou cartão';text.append(strong,small);banner.append(text);
+}
+function init(){
+ if(Object.prototype.hasOwnProperty.call(names,areaFromLink)&&document.getElementById('pixBox')?.hidden!==false){
+   const match=radios.find(x=>x.value===areaFromLink);
+   if(match&&!match.disabled){match.checked=true;match.dispatchEvent(new Event('change',{bubbles:true}));}
+ }
+ radios.forEach(x=>x.addEventListener('change',paint));
+ paint();
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();
 </script>
 </body>
