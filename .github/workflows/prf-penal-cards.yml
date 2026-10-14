@@ -1,0 +1,44 @@
+name: Checkout individual PRF/Polícia Penal e combo WhatsApp
+on:
+  pull_request:
+    branches: [main]
+    paths: ['index.html', 'banners/**', '.github/workflows/prf-penal-cards.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  smoke:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - name: Checkout antigo preservado + novos cards + scripts válidos
+        run: |
+          node - <<'NODE'
+          const fs = require('fs'), vm = require('node:vm'), assert = require('node:assert/strict');
+          const html=fs.readFileSync('index.html','utf8');
+          for(const code of ['prf','penal']) {
+            assert.ok(html.includes('name="area" value="'+code+'"'));
+            assert.ok(html.includes('data-jr-pick-area="'+code+'"'));
+          }
+          assert.match(html,/wa\.me\/5569993539150\?text=/);
+          assert.match(html,/R\$ 197,00 • Atendimento e compra diretamente no WhatsApp/);
+          assert.match(html,/R\$ 129,90/);
+          assert.match(html,/fetch\('\/api\/checkout'/);
+          assert.match(html,/id="checkoutForm"/);
+          assert.match(html,/infinitepay-payment\.js/);
+          assert.match(html,/card-payment\.js/);
+          assert.ok(!html.includes('value="combo"'));
+          for(const image of ['prf-administrativa','policia-penal','combo-semusa-sesau']){
+            const file='banners/'+image+'.svg'; assert.ok(fs.existsSync(file));assert.ok(fs.statSync(file).size>1500);
+          }
+          let scripts=0;
+          const re=/<script\b([^>]*)>([\s\S]*?)<\/script>/gi;
+          for(const match of html.matchAll(re)){
+            if(!match[1].includes('src=')){ new vm.Script(match[2],{filename:'inline-script-'+(++scripts)+'.js'}); }
+          }
+          assert.ok(scripts>=5);
+          console.log('PASS: HTML scripts, individual pricing, WhatsApp-only combo, preserved checkout, assets');
+          NODE
