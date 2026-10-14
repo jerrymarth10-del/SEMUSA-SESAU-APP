@@ -24,7 +24,17 @@ jobs:
             assert.ok(html.includes('data-jr-pick-area="'+code+'"'));
           }
           assert.match(html,/wa\.me\/5569993539150\?text=/);
-          assert.match(html,/R\$ 197,00 • Atendimento e compra diretamente no WhatsApp/);
+          assert.match(html,/R\$ 197,00 • Comprar no WhatsApp/);
+          // Os três cards adicionais ficam no mesmo seletor responsivo dos cards originais.
+          const start=html.indexOf('<div class="jr-exam-switch-actions">');
+          const end=html.indexOf('</div>',start);
+          assert.ok(start>0 && end>start,'Seletor de concursos deve existir');
+          const cards=html.slice(start,end);
+          for(const name of ['prf','penal']) assert.match(cards,new RegExp('class="jr-exam-choice jr-extra-choice" data-jr-pick-area="'+name+'"'));
+          assert.match(cards,/jr-exam-choice jr-extra-choice is-combo/);
+          assert.ok(!html.includes('jr-course-grid'),'Grade independente com imagem esticada removida');
+          assert.ok(!html.includes('grid-row:1\/4'),'Imagem não pode abranger altura total do card');
+          assert.match(html,/\.jr-exam-choice\.jr-extra-choice \.jr-exam-thumbnail\{[^}]*aspect-ratio:16\/9/);
           assert.match(html,/R\$ 129,90/);
           assert.match(html,/fetch\('\/api\/checkout'/);
           assert.match(html,/id="checkoutForm"/);
