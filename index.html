@@ -756,12 +756,20 @@ if(recoverSubmit)recoverSubmit.addEventListener('click',async()=>{
 });
 
 if(newCheckoutButton)newCheckoutButton.addEventListener('click',resetPendingCheckout);
-// Na nova visita não restaurar um QR Code anterior; a compra continua registrada no servidor.
+// Uma visita nova não restaura um Pix antigo, mas o pedido continua válido no backend.
 try{localStorage.removeItem(JR_PENDING_KEY)}catch{}
-// Ao voltar do aplicativo do banco na mesma aba, manter a consulta ao pagamento.
-// Em uma visita nova, o navegador abre o formulário limpo sem restaurar Pix antigo.
 window.addEventListener('focus',checkPayment);
-window.addEventListener('pageshow',checkPayment);
+window.addEventListener('pageshow',event=>{
+  if(event.persisted && !pixBox.hidden && !pixBox.classList.contains('approved')){
+    const params=new URL(window.location.href).searchParams;
+    if(!['card_return','infinite_return','t','payment_id','collection_id'].some(key=>params.has(key))){
+      resetPendingCheckout();
+      form.reset();
+      renderAreaSelection();
+    }
+  }
+  checkPayment();
+});
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')checkPayment()});
 
 const proofTrack=document.getElementById('proofTrack');
