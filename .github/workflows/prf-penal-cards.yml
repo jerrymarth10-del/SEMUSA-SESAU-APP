@@ -24,7 +24,20 @@ jobs:
             assert.ok(html.includes('data-jr-pick-area="'+code+'"'));
           }
           assert.match(html,/wa\.me\/5569993539150\?text=/);
-          assert.match(html,/R\$ 197,00 • Comprar no WhatsApp/);
+          const cardsStart=html.indexOf('id="jr-exam-switch-v1"');
+          const cardsEnd=html.indexOf('<div class="container hero-grid">', cardsStart);
+          assert.ok(cardsStart>0 && cardsEnd>cardsStart);
+          const cardsHtml=html.slice(cardsStart,cardsEnd);
+          assert.ok(!/R\\$\\s*(129|197)[,.]/.test(cardsHtml),'Preços não podem aparecer nos cinco cards');
+          assert.ok(cardsHtml.includes('<small>Ver preparatório</small>'));
+          assert.ok(cardsHtml.includes('<small>Falar no WhatsApp</small>'));
+          const base64Images=[...cardsHtml.matchAll(/<img class="jr-exam-thumbnail" src="data:image\\/jpeg;base64,([A-Za-z0-9+/=]+)"/g)];
+          assert.equal(base64Images.length,3,'Três imagens novas devem estar em JPEG Base64 no HTML');
+          for(const im of base64Images){
+            const bytes=Buffer.from(im[1],'base64');
+            assert.ok(bytes.length>=5000 && bytes.length<90000);
+            assert.equal(bytes[0],0xff);assert.equal(bytes[1],0xd8);assert.equal(bytes[2],0xff);
+          }
           // Os três cards adicionais ficam no mesmo seletor responsivo dos cards originais.
           const start=html.indexOf('<div class="jr-exam-switch-actions">');
           const end=html.indexOf('<div class="container hero-grid">',start);
