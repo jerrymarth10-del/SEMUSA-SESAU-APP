@@ -31,7 +31,7 @@ jobs:
           assert.ok(!/R\\$\\s*(129|197)[,.]/.test(cardsHtml),'Preços não podem aparecer nos cinco cards');
           assert.ok(cardsHtml.includes('<small>Ver preparatório</small>'));
           assert.ok(cardsHtml.includes('<small>Falar no WhatsApp</small>'));
-          const base64Images=[...cardsHtml.matchAll(/<img class="jr-exam-thumbnail" src="data:image\\/jpeg;base64,([A-Za-z0-9+/=]+)"/g)];
+          const base64Images=[...cardsHtml.matchAll(new RegExp('<img class="jr-exam-thumbnail" src="data:image/jpeg;base64,([A-Za-z0-9+/=]+)"','g'))];
           assert.equal(base64Images.length,3,'Três imagens novas devem estar em JPEG Base64 no HTML');
           for(const im of base64Images){
             const bytes=Buffer.from(im[1],'base64');
