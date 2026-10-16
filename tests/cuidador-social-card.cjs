@@ -1,0 +1,12 @@
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const html = fs.readFileSync(require('node:path').join(__dirname, '..', 'index.html'), 'utf8');
+assert.equal((html.match(/jr-cuidador-social-choice/g) || []).length, 1, 'Card de Cuidador Social deve ser único');
+assert.match(html, /jr-cuidador-social-choice[^>]*data-jr-link-out="1"/);
+assert.match(html, /Cuidador Social — SEMUSA/);
+assert.match(html, /Tenho%20interesse%20no%20preparat%C3%B3rio%20de%20Cuidador%20Social/);
+assert.doesNotMatch(html, /name="area" value="cuidadorsocial"/, 'Não habilitar checkout antes do backend aceitar o novo cargo');
+assert.match(html, /name="area" value="terapiaocupacional"/);
+assert.match(html, /name="area" value="prf"/);
+assert.match(html, /name="area" value="penal"/);
+console.log('OK: Cuidador Social na landing sem alterar o checkout');
