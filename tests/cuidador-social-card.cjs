@@ -1,0 +1,15 @@
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const html = fs.readFileSync(require('node:path').join(__dirname, '..', 'index.html'), 'utf8');
+assert.equal((html.match(/jr-cuidador-social-choice/g) || []).length, 1, 'Card de Cuidador Social deve ser único');
+assert.match(html, /jr-cuidador-social-choice[^>]*data-jr-pick-area="cuidadorsocial"/);
+assert.match(html, /Cuidador Social — SEMUSA/);
+assert.match(html, /name="area" value="cuidadorsocial"/);
+assert.match(html, /jr-cuidador-social-choice[^>]*href="#checkoutCard"/);
+assert.doesNotMatch(html.match(/jr-cuidador-social-choice[^\n]+/)?.[0] || '', /wa\.me/);
+assert.equal((html.match(/name="area" value="cuidadorsocial"/g) || []).length, 1, 'Nova área deve ser única');
+assert.match(html, /name="area" value="terapiaocupacional"/);
+assert.match(html, /name="area" value="prf"/);
+assert.match(html, /name="area" value="penal"/);
+assert.match(html, /data:image\/svg\+xml;base64,/);
+console.log('OK: Cuidador Social selecionável para Pix ou cartão na landing, sem alterar meios de pagamento');
