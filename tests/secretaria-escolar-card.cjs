@@ -1,0 +1,16 @@
+const fs=require('node:fs');
+const assert=require('node:assert/strict');
+const html=fs.readFileSync('index.html','utf8');
+assert.equal((html.match(/data-jr-pick-area="secretariaescolar"/g)||[]).length,1);
+assert.equal((html.match(/name="area" value="secretariaescolar"/g)||[]).length,1);
+assert.match(html,/jr-secretaria-escolar-choice/);
+assert.match(html,/data:image\/svg\+xml;base64,/);
+assert.match(html,/id="jr-individual-preparatorios-v1"/);
+assert.match(html,/href="#checkoutCard"/);
+const checkout=fs.readFileSync('api/checkout.js','utf8');
+const infinitepay=fs.readFileSync('api/infinitepay-checkout.js','utf8');
+assert.match(checkout,/vendiro.com.br/);
+assert.match(infinitepay,/infinitepay-proxy/);
+const infinitepayProxy=fs.readFileSync('lib/infinitepay-proxy.js','utf8');
+assert.match(infinitepayProxy,/vendiro.com.br/);
+console.log('PASS: landing adiciona só card e radio; meios de pagamento preservados');
