@@ -1,0 +1,15 @@
+const assert=require('node:assert/strict'),fs=require('node:fs');
+const html=fs.readFileSync('index.html','utf8');
+assert.equal((html.match(/data-jr-pick-area="secretariaescolar"/g)||[]).length,1,'Card tem de aparecer uma vez');
+assert.equal((html.match(/name="area" value="secretariaescolar"/g)||[]).length,1,'Area nova deve aparecer uma vez no seletor');
+assert.ok(html.includes('SEMED — Agente de Secretaria Escolar'),'Rótulo do resumo precisa acompanhar seleção');
+const pos=html.indexOf('data-jr-pick-area="secretariaescolar"');
+const card=html.slice(pos,html.indexOf('</a>',pos));
+assert.ok(/src="data:image\/svg\+xml;base64,/.test(card),'Imagem deve ser base64');
+assert.ok(card.includes('href="#checkoutCard"')||html.slice(pos-200,pos).includes('href="#checkoutCard"'));
+assert.ok(html.includes('name="area" value="cuidadorsocial"'),'Não perder Cuidador Social');
+assert.ok(html.includes('data-jr-pick-area="cuidadorsocial"'),'Não perder card Cuidador Social');
+assert.ok(html.includes('data-jr-pick-area="prf"'),'Não perder PRF');
+assert.ok(html.includes('data-jr-pick-area="penal"'),'Não perder Polícia Penal');
+assert.ok(!html.includes('SECRETARIA2026'),'Senha manual não deve ir para landing pública');
+console.log('OK: opção SEMED preparada na landing, checkout sem arquivos alterados');
